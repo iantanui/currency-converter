@@ -9,14 +9,15 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("latest")
-    suspend fun getRates(@Query("base") base: String):  CurrencyResponse
+    suspend fun getRates(@Query("base") base: String, @Query("access_key") apiKey: String):  CurrencyResponse
 
     companion object {
-        private const val BASE_URL= ""
+        private const val BASE_URL= "https://api.freecurrencyapi.com/v1/"
+        internal const val API_KEY = "fca_live_SnjMynmRd2nl3dte7zzFTW9HxH5qAj0jrFtGOCGj"
 
         fun create(): ApiService {
             return Retrofit.Builder()
-                .baseurl(BASE_URL)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)

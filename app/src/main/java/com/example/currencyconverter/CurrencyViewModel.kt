@@ -18,11 +18,20 @@ class CurrencyViewModel : ViewModel() {
     fun fetchRates(base: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.getRates(base)
+                val response = apiService.getRates(base, ApiService.API_KEY)
                 rates = response.rates
             } catch (e: Exception) {
                 errorMessage = e.message ?: "An error occurred"
             }
         }
+    }
+
+    // Dummy data for preview
+    fun setDummyData() {
+        rates = mapOf(
+            "EUR" to 0.85,
+            "GBP" to 0.75,
+            "JPY" to 110.0
+        )
     }
 }

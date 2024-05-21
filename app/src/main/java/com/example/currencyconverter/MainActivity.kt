@@ -3,6 +3,7 @@ package com.example.currencyconverter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,13 +31,14 @@ import com.example.currencyconverter.ui.theme.CurrencyConverterTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel: CurrencyViewModel by viewModels()
         setContent {
             CurrencyConverterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    CurrencyConverter()
+                    CurrencyConverter(viewModel)
                 }
             }
         }
@@ -48,7 +50,7 @@ fun CurrencyConverter(viewModel: CurrencyViewModel) {
     var amount by remember { mutableStateOf("1.0") }
     val baseCurrency by remember { mutableStateOf("USD") }
     var targetCurrency by remember { mutableStateOf("EUR") }
-    val convertedAmount by remember { mutableStateOf("") }
+    var convertedAmount by remember { mutableStateOf("") }
 
     LaunchedEffect(baseCurrency) {
         viewModel.fetchRates(baseCurrency)
@@ -89,8 +91,14 @@ fun CurrencyConverter(viewModel: CurrencyViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /*TODO*/ }
-        ) {
+            onClick = {
+                val rate = viewModel.rates[targetCurrency] ?: 0.0
+                convertedAmount = if (rate != 0.0) {
+                    (amount.toDouble() * rate).toString()
+                } else {
+                    "Conversion rate not available"
+                }
+            }) {
             Text("Convert")
         }
 
@@ -100,6 +108,10 @@ fun CurrencyConverter(viewModel: CurrencyViewModel) {
             "Converted Amount: $convertedAmount",
             fontSize = 18.sp
         )
+
+        if (viewModel.errorMessage.isNotEmpty()) {
+            Text("Error: ${viewModel.errorMessage}", color = MaterialTheme.colorScheme.error)
+        }
     }
 }
 
@@ -107,6 +119,7 @@ fun CurrencyConverter(viewModel: CurrencyViewModel) {
 @Composable
 fun GreetingPreview() {
     CurrencyConverterTheme {
-        CurrencyConverter()
+        val viewModel = CurrencyViewModel().apply { setDummyData() }
+        CurrencyConverter(viewModel = viewModel)
     }
 }
