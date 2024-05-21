@@ -1,3 +1,5 @@
+// JSON response from API
+
 package com.example.currencyconverter
 
 data class CurrencyResponse(

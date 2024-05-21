@@ -1,3 +1,5 @@
+// Handle API requests
+
 package com.example.currencyconverter
 
 import retrofit2.Retrofit
