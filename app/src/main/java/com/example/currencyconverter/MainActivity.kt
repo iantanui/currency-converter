@@ -44,14 +44,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CurrencyConverter() {
+fun CurrencyConverter(viewModel: CurrencyViewModel) {
     var amount by remember { mutableStateOf("1.0") }
     val baseCurrency by remember { mutableStateOf("USD") }
     var targetCurrency by remember { mutableStateOf("EUR") }
     val convertedAmount by remember { mutableStateOf("") }
 
     LaunchedEffect(baseCurrency) {
-
+        viewModel.fetchRates(baseCurrency)
     }
 
     Column(
